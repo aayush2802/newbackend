@@ -2,12 +2,17 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import numpy as np
 import joblib
+import os
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend requests
 
 # Load the pre-trained KNN model
 model = joblib.load('knn_model.pkl')
+
+@app.route('/')
+def home():
+    return "Flask backend is running!"
 
 @app.route('/predict', methods=['POST'])
 def predict_crop():
@@ -37,4 +42,5 @@ def predict_crop():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000)  # Render uses port 10000 by default
+    port = int(os.environ.get("PORT", 10000))  # Use Render's assigned port
+    app.run(host='0.0.0.0', port=port)
